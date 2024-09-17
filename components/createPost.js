@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  Modal
 } from "react-native";
 import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -15,8 +16,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { Link, router } from "expo-router";
 
-const Test = () => {
+const Test = ({modalVisible, setModalVisible, post, setPost}) => {
   const [postText, setPostText] = useState("");
+  const [image, setImage] = useState(null);
+
+
   const handlePostTextChange = (text) => {
     setPostText(text);
   };
@@ -46,15 +50,17 @@ const Test = () => {
   // };
 
   const handlePost = () => {
-    console.log("Post", postText);
-    // router.replace("/home", { post: { text: postText, image: image } });
+    setPost([...post, {text: postText, img: image}])
+    setPostText('');
+    setImage(null)
+    setModalVisible(!modalVisible)
   };
 
   const postHandlebutton = () => {
     alert("post submited");
   };
   const crosButton = () => {
-    router.replace("/home");
+    setModalVisible(!modalVisible)
   };
 
   const uploadByCamera = async () => {
@@ -77,7 +83,7 @@ const Test = () => {
       setImage(result.assets[0].uri);
     }
   };
-  const [image, setImage] = useState(null);
+
   const pickImage = async () => {
     // Request permission to access media library
     if (Platform.OS !== "web") {
@@ -102,7 +108,13 @@ const Test = () => {
     }
   };
 
-  return (
+  return (<Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => {
+      setModalVisible(!modalVisible);
+    }}> 
     <ScrollView style={styles.container1}>
         <View style={styles.container}>
           <View style={styles.header}>
@@ -115,7 +127,7 @@ const Test = () => {
           <ScrollView style={styles.content}>
             <View style={styles.profile}>
               <Image
-                source={require("./hridoy.jpeg")}
+                source={require("../assets/hridoy.jpeg")}
                 style={styles.profileImage}
               />
               <Text style={styles.profileText}>Jaber Ahmed</Text>
@@ -157,6 +169,8 @@ const Test = () => {
           </TouchableOpacity>
         </View>
     </ScrollView>
+
+    </Modal>
   );
 };
 
